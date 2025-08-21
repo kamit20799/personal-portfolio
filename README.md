@@ -157,7 +157,6 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 📞 Contact
 
 - **Email**: kumaramit207999@gmail.com
-- **Phone**: +91 8757126629
 - **LinkedIn**: [linkedin.com/in/kumaramit207999](https://linkedin.com/in/kumaramit207999)
 - **GitHub**: [github.com/your-username](https://github.com/your-username)
 
