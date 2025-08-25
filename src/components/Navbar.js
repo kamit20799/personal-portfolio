@@ -34,10 +34,37 @@ const Navbar = () => {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const navbarHeight = 70;
+      const elementPosition = element.offsetTop - navbarHeight;
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
       setIsMobileMenuOpen(false);
     }
   };
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const navbar = event.target.closest('.navbar');
+      if (!navbar && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const navItems = [
     { id: 'hero', label: 'Home' },
@@ -82,7 +109,9 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          
+        </div>
+
+        <div className="nav-actions">
           <motion.button 
             className="theme-toggle"
             onClick={toggleTheme}
@@ -92,16 +121,17 @@ const Navbar = () => {
           >
             {isDarkMode ? <FaSun /> : <FaMoon />}
           </motion.button>
-        </div>
 
-        <button 
-          className="mobile-menu-toggle"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+          <button 
+            className={`mobile-menu-toggle ${isMobileMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
       
       {/* Mobile Menu */}

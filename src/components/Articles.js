@@ -5,10 +5,27 @@ import { FaChevronLeft, FaChevronRight, FaMedium, FaBlog } from 'react-icons/fa'
 
 const Articles = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
+  const [containerHeight, setContainerHeight] = useState("auto");
+  const [previousArticles, setPreviousArticles] = useState([]);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  React.useEffect(() => {
+    const updateHeight = () => {
+      const grid = document.querySelector('.articles-grid');
+      if (grid) {
+        setContainerHeight(grid.offsetHeight + 'px');
+      }
+    };
+    
+    updateHeight();
+    const timeout = setTimeout(updateHeight, 100); // Small delay to ensure render
+    
+    return () => clearTimeout(timeout);
+  }, [currentIndex]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -32,6 +49,27 @@ const Articles = () => {
         ease: "easeOut"
       }
     }
+  };
+
+  // Slide animation variants
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction < 0 ? "100%" : "-100%",
+      opacity: 0,
+    })
+  };
+
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset, velocity) => {
+    return Math.abs(offset) * velocity;
   };
 
   // Technical Articles & Insights
@@ -136,21 +174,114 @@ const Articles = () => {
     }
   ];
 
-  const articlesPerPage = 3;
-  const totalPages = Math.ceil(articles.length / articlesPerPage);
+  // Responsive articles per page
+  const getArticlesPerPage = () => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth <= 768) return 1; // Mobile: 1 card
+      if (window.innerWidth <= 1024) return 2; // Tablet: 2 cards
+    }
+    return 3; // Desktop: 3 cards
+  };
+
+  const [articlesPerPage, setArticlesPerPage] = React.useState(3);
+  const totalArticles = articles.length;
+
+  // Update articles per page on resize
+  React.useEffect(() => {
+    const handleResize = () => {
+      setArticlesPerPage(getArticlesPerPage());
+    };
+
+    setArticlesPerPage(getArticlesPerPage());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % totalPages);
+    const currentArticles = getCurrentArticles();
+    setPreviousArticles(currentArticles.map(a => a.articleIndex));
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % totalArticles);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + totalPages) % totalPages);
+    const currentArticles = getCurrentArticles();
+    setPreviousArticles(currentArticles.map(a => a.articleIndex));
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + totalArticles) % totalArticles);
+  };
+
+  const paginate = (newDirection) => {
+    setDirection(newDirection);
+    if (newDirection === 1) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
   };
 
   const getCurrentArticles = () => {
-    const startIndex = currentIndex * articlesPerPage;
-    return articles.slice(startIndex, startIndex + articlesPerPage);
+    const result = [];
+    for (let i = 0; i < articlesPerPage; i++) {
+      const index = (currentIndex + i) % totalArticles;
+      result.push({
+        ...articles[index],
+        position: i,
+        articleIndex: index,
+        id: `article-${index}`
+      });
+    }
+    return result;
   };
+
+  const getCardAnimation = (position, isExiting = false, isEntering = false) => {
+    const baseDelay = position * 0.1; // Stagger animation by position
+    const duration = 0.6;
+    const ease = "easeInOut";
+
+    if (isExiting) {
+      // Cards sliding out
+      if (direction === 1) { // Right click - slide out left
+        return {
+          initial: { x: 0, opacity: 1 },
+          animate: { x: "-100%", opacity: 0 },
+          transition: { duration, ease, delay: baseDelay }
+        };
+      } else { // Left click - slide out right
+        return {
+          initial: { x: 0, opacity: 1 },
+          animate: { x: "100%", opacity: 0 },
+          transition: { duration, ease, delay: baseDelay }
+        };
+      }
+    }
+
+    if (isEntering) {
+      // New card sliding in
+      if (direction === 1) { // Right click - slide in from right
+        return {
+          initial: { x: "100%", opacity: 0 },
+          animate: { x: 0, opacity: 1 },
+          transition: { duration, ease, delay: 0.3 }
+        };
+      } else { // Left click - slide in from left
+        return {
+          initial: { x: "-100%", opacity: 0 },
+          animate: { x: 0, opacity: 1 },
+          transition: { duration, ease, delay: 0.3 }
+        };
+      }
+    }
+
+    // Cards shifting to new positions
+    const moveDistance = direction === 1 ? "-33.33%" : "33.33%";
+    return {
+      initial: { x: 0, opacity: 1 },
+      animate: { x: 0, opacity: 1 },
+      transition: { duration, ease, delay: baseDelay + 0.1 }
+    };
+  };
+
 
   return (
     <motion.section 
@@ -176,17 +307,26 @@ const Articles = () => {
               <FaChevronLeft />
             </button>
 
-            <div className="articles-grid">
-              {getCurrentArticles().map((article, index) => (
+            <div className="articles-grid-container" style={{ height: containerHeight }}>
+              <AnimatePresence initial={false} custom={direction}>
                 <motion.div
-                  key={`${currentIndex}-${index}`}
-                  className="article-card"
-                  variants={cardVariants}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ y: -3 }}
+                  key={currentIndex}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    duration: 0.4,
+                    ease: "easeInOut"
+                  }}
+                  className="articles-grid"
                 >
+                  {getCurrentArticles().map((article, index) => (
+                    <div
+                      key={`${currentIndex}-${index}`}
+                      className="article-card"
+                    >
                   <div className="article-header">
                     <div className="platform-badge">
                       {article.platform === "Medium" ? <FaMedium /> : <FaBlog />}
@@ -218,8 +358,10 @@ const Articles = () => {
                       </span>
                     ))}
                   </div>
+                    </div>
+                  ))}
                 </motion.div>
-              ))}
+              </AnimatePresence>
             </div>
 
             <button
@@ -232,11 +374,14 @@ const Articles = () => {
           </div>
 
           <div className="carousel-indicators">
-            {Array.from({ length: totalPages }, (_, index) => (
+            {Array.from({ length: totalArticles }, (_, index) => (
               <button
                 key={index}
                 className={`indicator ${index === currentIndex ? 'active' : ''}`}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  setDirection(index > currentIndex ? 1 : -1);
+                  setCurrentIndex(index);
+                }}
               />
             ))}
           </div>

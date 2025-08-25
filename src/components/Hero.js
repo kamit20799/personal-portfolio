@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaEnvelope, FaDownload } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaEnvelope, FaMedium, FaInstagram, FaDownload } from 'react-icons/fa';
 
 const Hero = () => {
   const containerVariants = {
@@ -101,6 +101,26 @@ const Hero = () => {
             whileTap={{ scale: 0.95 }}
           >
             <FaEnvelope />
+          </motion.a>
+          <motion.a 
+            href="https://medium.com/@kumaramit20799"
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="social-link"
+            whileHover={{ y: -3, scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaMedium />
+          </motion.a>
+          <motion.a 
+            href="https://www.instagram.com/kumaramit20799/"
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="social-link"
+            whileHover={{ y: -3, scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaInstagram />
           </motion.a>
         </motion.div>
       </motion.div>

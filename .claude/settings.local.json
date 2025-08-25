@@ -4,7 +4,11 @@
       "Bash(npm start)",
       "Read(/C:\\Users\\kamit\\Downloads/**)",
       "Read(/C:\\Users\\kamit\\Downloads/**)",
-      "Bash(npm i:*)"
+      "Bash(npm i:*)",
+      "Bash(npm run start:*)",
+      "Read(/c:\\Users\\kamit\\Downloads/**)",
+      "Read(/c:\\Users\\kamit\\Downloads/**)",
+      "Read(/c:\\Users\\kamit\\Downloads/**)"
     ],
     "deny": [],
     "ask": []

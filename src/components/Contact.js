@@ -114,22 +114,22 @@ const Contact = () => {
 
   const contactMethods = [
     {
-      icon: <FaEnvelope />,
-      label: "Email",
-      value: "kumaramit207999@gmail.com",
-      href: "mailto:kumaramit207999@gmail.com"
+      icon: <FaGithub />,
+      label: "GitHub",
+      value: "View my projects",
+      href: "https://github.com/kumaramit207999"
     },
     {
       icon: <FaLinkedin />,
       label: "LinkedIn",
       value: "Connect with me",
-      href: "https://www.linkedin.com/in/kumaramit207999/"
+      href: "https://linkedin.com/in/kumaramit207999"
     },
     {
-      icon: <FaGithub />,
-      label: "GitHub",
-      value: "View my projects",
-      href: "https://github.com/kamit20799"
+      icon: <FaEnvelope />,
+      label: "Email",
+      value: "kumaramit207999@gmail.com",
+      href: "mailto:kumaramit207999@gmail.com"
     },
     {
       icon: <FaMedium />,
@@ -152,7 +152,7 @@ const Contact = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      animate={inView ? "visible" : "hidden"}
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>

@@ -35,6 +35,7 @@ const Skills = () => {
   const skills = [
     {
       category: "Testing Frameworks",
+      icon: "🛠️",
       items: [
         "Cypress.io",
         "Selenium WebDriver",
@@ -46,6 +47,7 @@ const Skills = () => {
     },
     {
       category: "Programming Languages",
+      icon: "💻",
       items: [
         "JavaScript",
         "Python",
@@ -56,6 +58,7 @@ const Skills = () => {
     },
     {
       category: "API Testing",
+      icon: "🔗",
       items: [
         "Postman",
         "REST API Testing",
@@ -66,6 +69,7 @@ const Skills = () => {
     },
     {
       category: "Testing Methodologies",
+      icon: "📋",
       items: [
         "Manual Testing",
         "Automated Testing",
@@ -77,6 +81,7 @@ const Skills = () => {
     },
     {
       category: "Tools & Technologies",
+      icon: "⚙️",
       items: [
         "JIRA",
         "TestRail",
@@ -88,6 +93,7 @@ const Skills = () => {
     },
     {
       category: "Databases",
+      icon: "🗄️",
       items: [
         "MySQL",
         "PostgreSQL",
@@ -104,40 +110,50 @@ const Skills = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      animate={inView ? "visible" : "hidden"}
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>
           <h2 className="section-title">Skills & Expertise</h2>
         </motion.div>
         
-        <div className="skills-grid">
+        <div className="skills-grid-modern">
           {skills.map((skillGroup, index) => (
             <motion.div
               key={index}
-              className="skill-group"
+              className="skill-card-modern"
               variants={itemVariants}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -4 }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="skill-category-title">{skillGroup.category}</h3>
-              <div className="skill-tags">
+              <div className="skill-card-header">
+                <div className="skill-icon">{skillGroup.icon}</div>
+                <h3 className="skill-title-modern">{skillGroup.category}</h3>
+              </div>
+              
+              <div className="skill-items-modern">
                 {skillGroup.items.map((skill, skillIndex) => (
-                  <motion.span
+                  <motion.div
                     key={skillIndex}
-                    className="skill-tag"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    className="skill-item-modern"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ 
                       delay: index * 0.1 + skillIndex * 0.05,
-                      duration: 0.3
+                      duration: 0.4,
+                      ease: "easeOut"
                     }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ 
+                      x: 4,
+                      transition: { duration: 0.2 }
+                    }}
                   >
-                    {skill}
-                  </motion.span>
+                    <div className="skill-dot"></div>
+                    <span className="skill-name">{skill}</span>
+                  </motion.div>
                 ))}
               </div>
+              
             </motion.div>
           ))}
         </div>
