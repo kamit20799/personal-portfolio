@@ -73,14 +73,11 @@ const Projects = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      animate="visible"
     >
       <div className="container">
         <motion.div className="section-header" variants={cardVariants}>
-          <h2 className="section-title">Projects & Certifications</h2>
-          <p className="section-subtitle">
-            Professional certifications and continuous learning in quality assurance and testing automation
-          </p>
+          <h2 className="section-title">Certifications</h2>
         </motion.div>
         
         <div className="projects-grid">
