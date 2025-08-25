@@ -104,14 +104,11 @@ const Skills = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      animate="visible"
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>
           <h2 className="section-title">Skills & Expertise</h2>
-          <p className="section-subtitle">
-            A comprehensive toolkit for ensuring software quality and reliability
-          </p>
         </motion.div>
         
         <div className="skills-grid">
@@ -130,7 +127,7 @@ const Skills = () => {
                     key={skillIndex}
                     className="skill-tag"
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ 
                       delay: index * 0.1 + skillIndex * 0.05,
                       duration: 0.3

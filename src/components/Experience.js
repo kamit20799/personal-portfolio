@@ -5,29 +5,125 @@ import { FaBriefcase, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Experience = () => {
   const [ref, inView] = useInView({
-    triggerOnce: true,
+    triggerOnce: false,
     threshold: 0.1,
   });
+
+  const [activeCard, setActiveCard] = React.useState(0);
+  const [progressPercent, setProgressPercent] = React.useState(0);
+  const [filledDots, setFilledDots] = React.useState([false, false, false]);
+
+  React.useEffect(() => {
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          // Calculate progress and update state
+          const newProgress = getTimelineProgress();
+          setProgressPercent(newProgress);
+          
+          // Find which card is currently active and calculate dot states
+          const timelineItems = document.querySelectorAll('.timeline-item');
+          const viewportCenter = window.scrollY + window.innerHeight / 2;
+          
+          let newActiveCard = 0;
+          const newFilledDots = [false, false, false];
+          
+          // Check if experience section is in view
+          const experienceSection = document.getElementById('experience');
+          const isExperienceInView = experienceSection && 
+            experienceSection.getBoundingClientRect().top < window.innerHeight && 
+            experienceSection.getBoundingClientRect().bottom > 0;
+          
+          if (isExperienceInView) {
+            timelineItems.forEach((item, index) => {
+              const itemRect = item.getBoundingClientRect();
+              const itemCenter = itemRect.top + itemRect.height / 3 + window.scrollY;
+              
+              if (viewportCenter >= itemCenter) {
+                newActiveCard = index;
+              }
+            });
+            
+            // Tie dot highlighting directly to progress percentage with strict thresholds
+            // Only highlight dots when progress bar has actually reached their positions
+            const strictThresholds = [35, 70, 95]; // Very strict thresholds
+            
+            // Only highlight if we have meaningful progress and section is well in view
+            if (newProgress > 10) {
+              strictThresholds.forEach((threshold, index) => {
+                if (newProgress >= threshold) {
+                  newFilledDots[index] = true;
+                }
+              });
+            }
+          }
+          
+          setActiveCard(newActiveCard);
+          setFilledDots(newFilledDots);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Call once to set initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Calculate progress percentage based on timeline dots positions
+  const getTimelineProgress = () => {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    if (!timelineItems.length) return 0;
+    
+    const viewportCenter = window.scrollY + window.innerHeight / 2;
+    
+    // Get first and last timeline item positions
+    const firstItem = timelineItems[0].getBoundingClientRect();
+    const lastItem = timelineItems[timelineItems.length - 1].getBoundingClientRect();
+    
+    const startPoint = firstItem.top + firstItem.height / 3 + window.scrollY;
+    const endPoint = lastItem.top + lastItem.height / 3 + window.scrollY;
+    
+    if (viewportCenter < startPoint) return 0;
+    if (viewportCenter > endPoint) return 100;
+    
+    const progress = ((viewportCenter - startPoint) / (endPoint - startPoint)) * 100;
+    return Math.min(Math.max(progress, 0), 100);
+  };
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2
+        delayChildren: 0.2,
+        staggerChildren: 0.15
       }
     }
   };
 
   const cardVariants = {
-    hidden: { x: -50, opacity: 0 },
+    hidden: { 
+      x: -100, 
+      opacity: 0,
+      scale: 0.8,
+      rotateY: -15
+    },
     visible: {
       x: 0,
       opacity: 1,
+      scale: 1,
+      rotateY: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut"
+        duration: 0.8,
+        ease: "easeOut",
+        type: "spring",
+        damping: 20,
+        stiffness: 100
       }
     }
   };
@@ -38,41 +134,38 @@ const Experience = () => {
       company: "iMark Infotech Pvt. Ltd",
       period: "January 2024 - Present",
       location: "Chandigarh",
-      type: "Current Role",
-      achievements: [
-        "Performed comprehensive manual testing for diverse web applications, ensuring functionality, reliability, and user experience.",
-        "Created and executed detailed test cases for UI/UX, regression, and functional testing, ensuring complete test coverage.",
-        "Identified and documented bugs, collaborating with the development team to resolve issues and improve overall software performance.",
-        "Collaborated closely with stakeholders to gather requirements and ensure testing strategies aligned with business goals.",
-        "Enhanced testing efficiency by implementing improvements in test case management and defect reporting processes."
+      type: "Full-time",
+      summary: "Comprehensive manual testing for web applications with complete test coverage",
+      keyPoints: [
+        "Manual testing & bug identification",
+        "Test case management & execution", 
+        "Stakeholder collaboration"
       ]
     },
     {
-      title: "Software Development Engineer in Test (SDET)",
+      title: "Software Development Engineer in Test",
       company: "Trimindtech Solutions",
       period: "August 2023 - December 2023",
       location: "Hyderabad",
       type: "Contract",
-      achievements: [
-        "Automated 100+ UAT test cases with the Robot Framework and Python, focusing on UI testing and Excel-based validations.",
-        "Developed custom keywords using libraries like SeleniumLibrary, Faker, and RPA Framework - Excel for tailored test case automation.",
-        "Read and processed large datasets with XLRD, enabling extensive automation of data validations.",
-        "Assisted a 10-member team with framework setup, troubleshooting, and creating scalable testing solutions for complex scenarios.",
-        "Pushed automation code to version control systems for review and successfully merged changes after feedback."
+      summary: "Automated 100+ UAT test cases using Robot Framework and Python",
+      keyPoints: [
+        "Robot Framework automation",
+        "Excel data validation",
+        "Team framework support"
       ]
     },
     {
-      title: "Software Development Engineer in Test (SDET)",
+      title: "Software Development Engineer in Test",
       company: "QASource",
       period: "March 2022 - July 2023",
       location: "Chandigarh",
       type: "Full-time",
-      achievements: [
-        "Designed and executed smoke, functional, and regression test cases to ensure robust application performance.",
-        "Developed and maintained reusable automation frameworks, automating 100+ smoke and functional test cases with Cypress.io.",
-        "Performed API testing using Postman, validating endpoints, request/response payloads, and API integrations.",
-        "Performed API automation using Cypress.io, creating test scripts to validate API endpoints.",
-        "Implemented BDD using Cucumber, writing Gherkin-based test scenarios to bridge communication between technical and non-technical teams."
+      summary: "Developed automation frameworks and performed comprehensive testing",
+      keyPoints: [
+        "Cypress.io automation",
+        "API testing with Postman",
+        "BDD with Cucumber"
       ]
     }
   ];
@@ -84,68 +177,93 @@ const Experience = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      animate="visible"
     >
       <div className="container">
         <motion.div className="section-header" variants={cardVariants}>
           <h2 className="section-title">Professional Experience</h2>
-          <p className="section-subtitle">
-            My journey in quality assurance, building reliable software through comprehensive testing
-          </p>
         </motion.div>
       
-        
-        <div className="experience-timeline">
-          {experiences.map((exp, index) => (
-            <motion.div
-              key={index}
-              className="experience-item"
-              variants={cardVariants}
-              whileHover={{ y: -3 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="experience-header">
-                <div className="experience-icon">
+        <div className="experience-timeline-modern">
+          <div className="timeline-line">
+            <motion.div 
+              className="timeline-progress"
+              initial={{ height: "0%" }}
+              animate={{ 
+                height: inView ? `${progressPercent}%` : "0%" 
+              }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                mass: 0.8,
+                restDelta: 0.001
+              }}
+            />
+            
+          </div>
+          
+          {experiences.map((exp, index) => {
+            const isLeft = index % 2 === 0;
+            
+            return (
+              <div
+                key={index}
+                className={`timeline-item ${isLeft ? 'timeline-left' : 'timeline-right'}`}
+              >
+                <motion.div 
+                  className={`timeline-dot ${filledDots[index] ? 'filled' : ''} ${activeCard === index ? 'active' : ''}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: 1
+                  }}
+                  transition={{ 
+                    duration: 0.5,
+                    ease: "easeOut"
+                  }}
+                >
                   <FaBriefcase />
-                </div>
-                <div className="experience-meta">
-                  <span className="experience-badge">{exp.type}</span>
-                </div>
-              </div>
-              
-              <div className="experience-content">
-                <h3 className="experience-title">{exp.title}</h3>
-                <h4 className="experience-company">{exp.company}</h4>
+                </motion.div>
                 
-                <div className="experience-info">
-                  <div className="info-item">
-                    <FaCalendarAlt />
-                    <span>{exp.period}</span>
-                  </div>
-                  <div className="info-item">
-                    <FaMapMarkerAlt />
-                    <span>{exp.location}</span>
-                  </div>
-                </div>
+                <div 
+                  className="timeline-card"
+                >
+                <div className="timeline-badge">{exp.type}</div>
                 
-                <div className="experience-achievements">
-                  <h5>Key Achievements</h5>
-                  <ul>
-                    {exp.achievements.map((achievement, achIndex) => (
-                      <motion.li 
-                        key={achIndex}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                        transition={{ delay: index * 0.1 + achIndex * 0.05 }}
+                <div className="timeline-content">
+                  <div className="timeline-header">
+                    <h3 className="timeline-title">{exp.title}</h3>
+                    <h4 className="timeline-company">{exp.company}</h4>
+                  </div>
+                  
+                  <div className="timeline-meta">
+                    <div className="meta-item">
+                      <FaCalendarAlt />
+                      <span>{exp.period}</span>
+                    </div>
+                    <div className="meta-item">
+                      <FaMapMarkerAlt />
+                      <span>{exp.location}</span>
+                    </div>
+                  </div>
+                  
+                  <p className="timeline-summary">{exp.summary}</p>
+                  
+                  <div className="timeline-skills">
+                    {exp.keyPoints.map((point, pointIndex) => (
+                      <span
+                        key={pointIndex}
+                        className="timeline-skill-tag"
                       >
-                        {achievement}
-                      </motion.li>
+                        {point}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          ))}
+            </div>
+            );
+          })}
         </div>
       </div>
     </motion.section>

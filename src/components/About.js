@@ -33,10 +33,10 @@ const About = () => {
   };
 
   const stats = [
-    { number: "2+", label: "Years Experience" },
-    { number: "50+", label: "Projects Tested" },
-    { number: "100%", label: "Bug Reduction" },
-    { number: "10+", label: "Tools Mastered" }
+    { number: "3+", label: "Years\nExperience" },
+    { number: "50+", label: "Projects\nTested" },
+    { number: "100%", label: "Bug\nReduction" },
+    { number: "10+", label: "Tools\nMastered" }
   ];
 
   return (
@@ -46,37 +46,21 @@ const About = () => {
       ref={ref}
       variants={containerVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      animate="visible"
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>
           <h2 className="section-title">About Me</h2>
-          <p className="section-subtitle">
-            Passionate QA Engineer dedicated to ensuring software excellence through 
-            comprehensive testing strategies and automation frameworks.
-          </p>
         </motion.div>
         
         <div className="about-content">
           <motion.div className="about-text" variants={itemVariants}>
             <p className="about-description">
-              With over 2 years of experience in quality assurance, I specialize in both manual and 
-              automated testing processes. My expertise spans across various testing methodologies, 
-              including functional testing, regression testing, API testing, and test automation using 
-              modern frameworks like Cypress.io, Selenium, and Robot Framework.
+              With over 3 years of experience in quality assurance, I specialize in both manual and automated testing processes. My expertise spans across functional testing, regression testing, API testing, and test automation using modern frameworks like Cypress.io, Selenium, and Robot Framework. I have successfully delivered high-quality software solutions while working with diverse teams and technologies.
             </p>
             
             <p className="about-description">
-              I have a proven track record of identifying critical bugs, improving test coverage, 
-              and implementing efficient testing processes that reduce production issues by up to 45%. 
-              My experience includes working with BDD methodologies using Cucumber, API testing with 
-              Postman, and setting up CI/CD pipelines for automated testing.
-            </p>
-            
-            <p className="about-description">
-              I'm passionate about staying updated with the latest testing tools and methodologies, 
-              continuously learning new technologies, and contributing to the delivery of high-quality 
-              software products that meet user expectations and business requirements.
+              I have a proven track record of identifying critical bugs, improving test coverage by 45%, and implementing efficient CI/CD pipelines for automated testing. My experience includes BDD methodologies using Cucumber, comprehensive API testing with Postman, and performance testing with JMeter. I'm passionate about staying updated with the latest testing tools and contributing to the delivery of robust, user-centric software products.
             </p>
           </motion.div>
 
