@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm start)",
       "Read(/C:\\Users\\kamit\\Downloads/**)",
-      "Read(/C:\\Users\\kamit\\Downloads/**)"
+      "Read(/C:\\Users\\kamit\\Downloads/**)",
+      "Bash(npm i:*)"
     ],
     "deny": [],
     "ask": []
