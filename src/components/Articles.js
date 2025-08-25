@@ -199,7 +199,7 @@ const Articles = () => {
                     <p className="article-description">
                       {article.description}...{' '}
                       <motion.a 
-                        href="https://medium.com/@kumaramit20799"
+                        href={article.url}
                         className="article-read-more"
                         target="_blank"
                         rel="noopener noreferrer"

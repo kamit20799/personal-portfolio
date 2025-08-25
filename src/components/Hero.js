@@ -48,7 +48,7 @@ const Hero = () => {
         </motion.h2>
         
         <motion.p className="hero-description" variants={itemVariants}>
-          Results-driven QA Engineer with 2+ years of experience in manual and automated testing. 
+          Results-driven QA Engineer with 3+ years of experience in manual and automated testing. 
           I specialize in ensuring software quality through comprehensive testing strategies, 
           focusing on test automation, API testing, and continuous integration.
         </motion.p>
@@ -75,7 +75,7 @@ const Hero = () => {
 
         <motion.div className="social-links" variants={itemVariants}>
           <motion.a 
-            href="https://github.com" 
+            href="https://github.com/kumaramit207999" 
             target="_blank" 
             rel="noopener noreferrer"
             className="social-link"
